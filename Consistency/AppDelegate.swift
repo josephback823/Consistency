@@ -4,8 +4,9 @@
 //
 //  Created by Joseph Sanghyun Back on 5/6/21.
 //
-
 import UIKit
+import Firebase
+import GooglePlaces
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,7 +14,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        FirebaseApp.configure()
+        
+        GMSPlacesClient.provideAPIKey(APIKeys.googlePlacesKey)
+
+                
         return true
     }
 
@@ -34,3 +40,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let id = notification.request.identifier
+        print("Received in-app notification with ID = \(id)")
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        completionHandler([.list, .banner, .sound])
+    }
+}
